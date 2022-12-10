@@ -239,7 +239,9 @@ document.querySelector('.btn.btn-warning').onclick = (e) => {
         let res = DOM.updateData(category, key, data)
         res.then(c => {
             console.log(c)
-        })
+            alert('success')
+        }).catch(e => console.log(e))
+
     } else {
         alert('no changes was made')
     }
