@@ -7,6 +7,7 @@ let App = {
         })
 
     },
+    CONTAINER: document.getElementById('root')
 }
 let ctgry = ['case', 'cooling', 'display', 'gpu', 'input', 'mb', 'processor', 'ps', 'ram', 'sd']
 let DOM = {
@@ -44,48 +45,135 @@ let DOM = {
     },
     dataManipulation: async (e) => {
         let p = []
-        console.log(e.target.getAttribute('data-value'))
         let res = await DOM.fetchList(e.target.getAttribute('data-value'))
 
         for (let i = 0; i < Object.keys(res).length; i++) {
             p.push(res[Object.keys(res)[i]])
         }
-
-        if (document.getElementById('root').children.length > 1) {
-            document.getElementById('root').children[1].remove()
-        }
-        document.getElementById('root').appendChild(DOM.showDropdown(p))
+        document.querySelectorAll(`li.nav-item>a`).forEach(a => {
+            a.innerText == e.target.innerText ? a.classList.add('active') : a.classList.remove('active')
+        })
+        DOM.clearElements(App.CONTAINER)
+        DOM.clearElements(document.querySelector('.container.selector'))
+        document.querySelector('.container.selector').appendChild(DOM.showDropdown(p))
+        document.querySelector('select[class="m-2"]').dispatchEvent(new Event("change"))
     },
     showForm: (e) => {
         let data = JSON.parse(e.target.value)
         console.log(data)
         let form = document.createElement('form')
-        form.classList.add('d-flex')
-        form.classList.add('flex-column')
-        form.classList.add('gap-3')
-        form.classList.add('w-75')
-        form.classList.add('mx-auto')
-        form.classList.add('py-3')
+        let formClasses = ['d-flex', 'flex-column', 'gap-3', 'w-100', 'mx-auto', 'py-3', 'align-items-start']
+        for (let c = 0; c < formClasses.length; c++) {
+            form.classList.add(formClasses[c])
+        }
+        let nameDiv = document.createElement('div')
+        let sourceDiv = document.createElement('div')
+        sourceDiv.classList.add('d-flex')
+        sourceDiv.classList.add('gap-3')
+        sourceDiv.classList.add('w-100')
+        nameDiv.classList.add('d-flex')
+        nameDiv.classList.add('gap-3')
+        nameDiv.classList.add('w-100')
+        let nameLbl = document.createElement('label')
+        nameLbl.innerText = 'Product name'
         let name = document.createElement('input')
+        name.type = 'text'
+        name.classList.add('w-100')
         name.id = 'name'
+        name.value = data.name
+        nameDiv.appendChild(nameLbl)
+        nameDiv.appendChild(name)
+        let imgLinksDiv = document.createElement('div')
+        let linksSpan = document.createElement('span')
+        linksSpan.innerText = 'Image Links'
+        let ol = document.createElement('ol')
+        ol.id = 'imgLinks'
+        imgLinksDiv.classList.add('w-100')
+        for (let v = 0; v < data.image_link.length; v++) {
+            let li = document.createElement('li')
+            let inputs = document.createElement('input')
+            inputs.type = 'text'
+            inputs.classList.add('image_link')
+            inputs.classList.add('w-100')
+            inputs.classList.add('m-2')
+            inputs.value = data.image_link[v]
+            li.appendChild(inputs)
+            ol.appendChild(li)
+        }
+        let addNewImageBtn = document.createElement('button')
+        addNewImageBtn.innerText = 'Add new image link'
+        addNewImageBtn.classList.add('btn')
+        addNewImageBtn.classList.add('btn-primary')
+        addNewImageBtn.addEventListener('click', DOM.addNewImageLink)
+        imgLinksDiv.appendChild(linksSpan)
+        imgLinksDiv.appendChild(ol)
+        imgLinksDiv.appendChild(addNewImageBtn)
         let span = document.createElement('span')
-        span.innerText = 'Source Link'
+        span.innerText = 'Specifications Link'
         let a = document.createElement('a')
         a.href = data.specification
         a.target = '_blank'
         a.appendChild(document.createTextNode(data.specification))
-        form.appendChild(span)
-        form.appendChild(a)
-        form.appendChild(name)
-        document.getElementById('root').appendChild(form)
+        sourceDiv.appendChild(span)
+        sourceDiv.appendChild(a)
+        form.appendChild(sourceDiv)
+        form.appendChild(nameDiv)
+        form.appendChild(imgLinksDiv)
+        let submitBtn = document.createElement('button')
+        submitBtn.innerText = 'Submit'
+        submitBtn.classList.add('btn')
+        submitBtn.classList.add('btn-outline-primary')
+        submitBtn.classList.add('mx-auto')
+        submitBtn.classList.add('text-center')
+        submitBtn.onclick = DOM.generateObj
+        form.appendChild(submitBtn)
+        DOM.clearElements(App.CONTAINER)
+        App.CONTAINER.appendChild(form)
     },
+    initialLoad: async () => {
+        let p = []
+        let res = await DOM.fetchList(ctgry[0])
+        document.querySelectorAll(`li.nav-item>a[data-value="${ctgry[0]}"]`)[0].classList.add('active')
+        for (let i = 0; i < Object.keys(res).length; i++) {
+            p.push(res[Object.keys(res)[i]])
+        }
+        document.querySelector('.container.selector').appendChild(DOM.showDropdown(p))
+        document.querySelector('select[class="m-2"]').dispatchEvent(new Event("change"))
+    },
+    clearElements: (element) => {
+        element.innerHTML = ''
+    },
+    addNewImageLink: (e) => {
+        e.preventDefault()
+        let li = document.createElement('li')
+        let inputs = document.createElement('input')
+        inputs.type = 'text'
+        inputs.classList.add('image_link')
+        inputs.classList.add('w-100')
+        inputs.classList.add('m-2')
+        li.appendChild(inputs)
+        console.log(document.getElementById('imgLinks').appendChild(li))
+    },
+    generateObj: (e) => {
+        e.preventDefault()
+        let obj = {}
+        console.log(document.querySelector(`.${Array.from(e.target.parentElement.classList).join('.')}`).getElementsByTagName('input'))
+        obj = {
+            ...obj
+        }
+    },
+    addProdSpec: () => {
+
+    }
 
 }
-let ul = DOM.appendUl()
-ul.classList.add('nav')
-ul.classList.add('nav-pills')
-ul.classList.add('nav-fill')
-document.getElementById('root').appendChild(ul)
 for (i in ctgry) {
-    document.getElementById('categories').appendChild(DOM.appendLiwithA(ctgry[i]))
+    document.querySelector('.nav.nav-pills').appendChild(DOM.appendLiwithA(ctgry[i]))
+}
+DOM.initialLoad()
+
+
+document.querySelector('.btn.btn-success').onclick = (e) => {
+    e.preventDefault()
+    DOM.addProdSpec()
 }
