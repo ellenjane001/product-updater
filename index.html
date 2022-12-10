@@ -26,23 +26,26 @@
     <div class="container selector text-center">
 
     </div>
+
+    <div class="container text-center" id="root">
+
+    </div>
     <div class="container text-center p-4 border">
         <h3>Add Specification</h3>
         <form id="add-product-spec" class="d-flex gap-3 align-items-center justify-content-center">
             <label for="spec-name">Name</label>
             <input type="text" name="spec-name" id="spec-name">
             <label for="spec-value">Value</label>
-            <input type="text" name="spec-value" id="spec-value">
+            <textarea rows="4" cols="50" name="spec-value" id="spec-value"></textarea>
             <button class="btn btn-success">Add</button>
+            <button class="btn btn-danger">Clear</button>
         </form>
     </div>
-    <div class="container text-center" id="root">
-
-    </div>
-    <div class="container">
+    <div class="container w-100 p-4 d-flex flex-column">
         <pre class="prettyprint p-lg-5">
 
         </pre>
+        <button class="btn btn-warning mx-auto mb-3">SAVE</button>
     </div>
 </body>
 </html>
