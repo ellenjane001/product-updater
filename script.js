@@ -221,6 +221,13 @@ document.querySelector('.btn.btn-success').onclick = (e) => {
     e.preventDefault()
     DOM.addProdSpec()
 }
+document.querySelector('.btn.btn-outline-success').onclick = (e) => {
+    e.preventDefault()
+    let data = JSON.parse(document.getElementsByTagName('pre')[0].innerHTML)
+    let inputs = document.getElementById('add-product-price').getElementsByTagName('input')[0]
+    data[inputs.name] = inputs.value
+    document.getElementsByTagName('pre')[0].innerHTML = JSON.stringify(data, null, 3)
+}
 document.querySelector('.btn.btn-danger').onclick = (e) => {
     e.preventDefault()
     let inp = document.querySelector(`.${Array.from(e.target.parentElement.classList).join('.')}`).getElementsByTagName('input')
