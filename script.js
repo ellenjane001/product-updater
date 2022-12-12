@@ -225,11 +225,10 @@ document.querySelector('.btn.btn-success').onclick = (e) => {
 document.querySelector('.btn.btn-outline-success').onclick = (e) => {
     e.preventDefault()
     let data = JSON.parse(document.getElementsByTagName('pre')[0].innerHTML)
-    console.log(data.price === '')
-    if (data.price === '') {
+    console.log(data)
+    if (data.price !== '') {
         alert('price already exists')
         document.querySelector('.btn.btn-outline-success').disabled = true
-
     } else {
         let inputs = document.getElementById('add-product-price').getElementsByTagName('input')[0]
         data[inputs.name] = inputs.value
