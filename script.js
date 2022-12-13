@@ -52,6 +52,41 @@ let DOM = {
         ul.id = 'categories'
         return ul
     },
+    showTbl: (data) => {
+        console.log(data)
+        let table = document.createElement('table')
+        let thead = document.createElement('thead')
+        let tr = document.createElement('tr')
+        let thName = document.createElement('th')
+        let thOptions = document.createElement('th')
+        let tbody = document.createElement('tbody')
+        table.classList.add('table')
+        table.classList.add('border')
+        thName.innerText = 'Name'
+        thOptions.innerText = 'Options'
+        tr.appendChild(thName)
+        tr.appendChild(thOptions)
+        thead.appendChild(tr)
+        for (d in data) {
+            let tr = document.createElement('tr')
+            let tdName = document.createElement('td')
+            let tdOption = document.createElement('td')
+            let btn = document.createElement('button')
+            btn.innerText = 'Update'
+            btn.setAttribute('data-value', data[d])
+            btn.classList.add('btn')
+            btn.classList.add('btn-outline-danger')
+            tdOption.appendChild(btn)
+            tdName.innerText = data[d].name
+            tr.appendChild(tdName)
+            tr.appendChild(tdOption)
+            tbody.appendChild(tr)
+        }
+
+        table.appendChild(thead)
+        table.appendChild(tbody)
+        return table
+    },
     showDropdown: (data) => {
         let select = document.createElement('select')
         for (d in data) {
@@ -77,6 +112,8 @@ let DOM = {
         })
         DOM.clearElements(App.CONTAINER)
         DOM.clearElements(document.querySelector('.container.selector'))
+
+        document.querySelector('.container.selector').appendChild(DOM.showTbl(p))
         document.querySelector('.container.selector').appendChild(DOM.showDropdown(p))
         document.querySelector('select[class="m-2"]').dispatchEvent(new Event("change"))
         document.querySelector('.btn.btn-outline-primary.mx-auto.text-center').dispatchEvent(new Event("click"))
@@ -90,12 +127,12 @@ let DOM = {
         }
         let nameDiv = document.createElement('div')
         let sourceDiv = document.createElement('div')
-        sourceDiv.classList.add('d-flex')
-        sourceDiv.classList.add('gap-3')
-        sourceDiv.classList.add('w-100')
-        nameDiv.classList.add('d-flex')
-        nameDiv.classList.add('gap-3')
-        nameDiv.classList.add('w-100')
+        let classes = ['d-flex', 'gap-3', 'w-100']
+        for (c in classes) {
+            sourceDiv.classList.add(classes[c])
+            nameDiv.classList.add(classes[c])
+        }
+
         let nameLbl = document.createElement('label')
         nameLbl.innerText = 'Product name'
         let name = document.createElement('input')
@@ -164,6 +201,7 @@ let DOM = {
             res[Object.keys(res)[i]]['key'] = Object.keys(res)[i]
             p.push(res[Object.keys(res)[i]])
         }
+        document.querySelector('.container.selector').appendChild(DOM.showTbl(p))
         document.querySelector('.container.selector').appendChild(DOM.showDropdown(p))
         document.querySelector('select[class="m-2"]').dispatchEvent(new Event("change"))
         document.querySelector('.btn.btn-outline-primary.mx-auto.text-center').dispatchEvent(new Event("click"))
