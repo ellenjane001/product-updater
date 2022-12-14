@@ -54,14 +54,12 @@ let DOM = {
     },
     showTbl: (data) => {
         console.log(data)
-        let table = document.createElement('table')
+        let table = DOM.createElem('table', ['table', 'border'])
         let thead = document.createElement('thead')
         let tr = document.createElement('tr')
         let thName = document.createElement('th')
         let thOptions = document.createElement('th')
         let tbody = document.createElement('tbody')
-        table.classList.add('table')
-        table.classList.add('border')
         thName.innerText = 'Name'
         thOptions.innerText = 'Options'
         tr.appendChild(thName)
@@ -71,24 +69,26 @@ let DOM = {
             let tr = document.createElement('tr')
             let tdName = document.createElement('td')
             let tdOption = document.createElement('td')
-            let btn = document.createElement('button')
+            let btn = DOM.createElem('button', ['btn', 'btn-outline-danger'], [{ a: 'data-value', v: JSON.stringify(data[d]) }])
             btn.innerText = 'Update'
-            btn.setAttribute('data-value', data[d])
-            btn.classList.add('btn')
-            btn.classList.add('btn-outline-danger')
+            btn.addEventListener('click', DOM.showProd)
             tdOption.appendChild(btn)
             tdName.innerText = data[d].name
             tr.appendChild(tdName)
             tr.appendChild(tdOption)
             tbody.appendChild(tr)
         }
-
         table.appendChild(thead)
         table.appendChild(tbody)
         return table
     },
+    showProd: (e) => {
+        DOM.clearElements(document.querySelector('.container.selector'))
+        DOM.showForm(e.target.getAttribute('data-value'))
+    },
     showDropdown: (data) => {
         let select = document.createElement('select')
+        select.classList.add('form-select')
         for (d in data) {
             let option = document.createElement('option')
             option.value = JSON.stringify(data[d])
@@ -112,28 +112,31 @@ let DOM = {
         })
         DOM.clearElements(App.CONTAINER)
         DOM.clearElements(document.querySelector('.container.selector'))
-
         document.querySelector('.container.selector').appendChild(DOM.showTbl(p))
-        document.querySelector('.container.selector').appendChild(DOM.showDropdown(p))
-        document.querySelector('select[class="m-2"]').dispatchEvent(new Event("change"))
-        document.querySelector('.btn.btn-outline-primary.mx-auto.text-center').dispatchEvent(new Event("click"))
+        // document.querySelector('.container.selector').appendChild(DOM.showDropdown(p))
+        // document.querySelector('select[class="form-select m-2"]').dispatchEvent(new Event("change"))
+        // document.querySelector('.btn.btn-outline-primary.mx-auto.text-center').dispatchEvent(new Event("click"))
+    },
+    createElem: (element, classes = [], attribs = []) => {
+        let e = document.createElement(element)
+        if (classes.length > 0) {
+            for (c in classes) {
+                e.classList.add(classes[c])
+            }
+        }
+        if (attribs.length > 0) {
+            for (attr in attribs) {
+                e.setAttribute(attribs[attr].a, attribs[attr].v)
+            }
+        }
+        return e
     },
     showForm: (e) => {
-        let data = JSON.parse(e.target.value)
-        let form = document.createElement('form')
-        let formClasses = ['d-flex', 'flex-column', 'gap-3', 'w-100', 'mx-auto', 'py-3', 'align-items-start']
-        for (let c = 0; c < formClasses.length; c++) {
-            form.classList.add(formClasses[c])
-        }
-        let nameDiv = document.createElement('div')
-        let sourceDiv = document.createElement('div')
-        let classes = ['d-flex', 'gap-3', 'w-100']
-        for (c in classes) {
-            sourceDiv.classList.add(classes[c])
-            nameDiv.classList.add(classes[c])
-        }
-
-        let nameLbl = document.createElement('label')
+        let data = JSON.parse(e)
+        let form = DOM.createElem('form', ['d-flex', 'flex-column', 'gap-3', 'w-100', 'mx-auto', 'py-3', 'align-items-start'])
+        let nameDiv = DOM.createElem('div', ['d-flex', 'gap-3', 'w-100'])
+        let sourceDiv = DOM.createElem('div', ['d-flex', 'gap-3', 'w-100'])
+        let nameLbl = DOM.createElem('label')
         nameLbl.innerText = 'Product name'
         let name = document.createElement('input')
         name.type = 'text'
@@ -141,6 +144,7 @@ let DOM = {
         name.id = 'name'
         name.name = 'name'
         name.value = data.name
+        name.classList.add('form-control')
         nameDiv.appendChild(nameLbl)
         nameDiv.appendChild(name)
         let imgLinksDiv = document.createElement('div')
@@ -153,17 +157,13 @@ let DOM = {
             let li = document.createElement('li')
             let inputs = document.createElement('input')
             inputs.type = 'text'
-            inputs.classList.add('image_link')
-            inputs.classList.add('w-100')
-            inputs.classList.add('m-2')
+            inputs.classList.add('image_link', 'w-100', 'm-2', 'form-control')
             inputs.value = data.image_link[v]
             li.appendChild(inputs)
             ol.appendChild(li)
         }
-        let addNewImageBtn = document.createElement('button')
+        let addNewImageBtn = DOM.createElem('button', ['btn', 'btn-primary'])
         addNewImageBtn.innerText = 'Add new image link'
-        addNewImageBtn.classList.add('btn')
-        addNewImageBtn.classList.add('btn-primary')
         addNewImageBtn.addEventListener('click', DOM.addNewImageLink)
         imgLinksDiv.appendChild(linksSpan)
         imgLinksDiv.appendChild(ol)
@@ -179,13 +179,8 @@ let DOM = {
         form.appendChild(sourceDiv)
         form.appendChild(nameDiv)
         form.appendChild(imgLinksDiv)
-        let submitBtn = document.createElement('button')
+        let submitBtn = DOM.createElem('button', ['btn', 'btn-outline-primary', 'mx-auto', 'text-center'], [{ a: 'data-value', v: JSON.stringify(data) }])
         submitBtn.innerText = 'Submit'
-        submitBtn.classList.add('btn')
-        submitBtn.classList.add('btn-outline-primary')
-        submitBtn.classList.add('mx-auto')
-        submitBtn.classList.add('text-center')
-        submitBtn.setAttribute('data-value', JSON.stringify(data))
         submitBtn.onclick = DOM.generateObj
         form.appendChild(submitBtn)
         DOM.clearElements(App.CONTAINER)
@@ -202,9 +197,9 @@ let DOM = {
             p.push(res[Object.keys(res)[i]])
         }
         document.querySelector('.container.selector').appendChild(DOM.showTbl(p))
-        document.querySelector('.container.selector').appendChild(DOM.showDropdown(p))
-        document.querySelector('select[class="m-2"]').dispatchEvent(new Event("change"))
-        document.querySelector('.btn.btn-outline-primary.mx-auto.text-center').dispatchEvent(new Event("click"))
+        // document.querySelector('.container.selector').appendChild(DOM.showDropdown(p))
+        // document.querySelector('select[class="form-select m-2"]').dispatchEvent(new Event("change"))
+        // document.querySelector('.btn.btn-outline-primary.mx-auto.text-center').dispatchEvent(new Event("click"))
     },
     clearElements: (element) => {
         element.innerHTML = ''
@@ -212,12 +207,10 @@ let DOM = {
     addNewImageLink: (e) => {
         e.preventDefault()
         let li = document.createElement('li')
-        let inputs = document.createElement('input')
+        let inputs = DOM.createElem('input', ['image_link', 'w-100', 'm-2', 'form-control'])
         inputs.type = 'text'
-        inputs.classList.add('image_link')
-        inputs.classList.add('w-100')
-        inputs.classList.add('m-2')
         li.appendChild(inputs)
+        document.getElementById('imgLinks').appendChild(li)
     },
     generateObj: (e) => {
         e.preventDefault()
@@ -272,7 +265,6 @@ document.querySelector('.btn.btn-outline-success').onclick = (e) => {
         data[inputs.name] = inputs.value
         document.getElementsByTagName('pre')[0].innerHTML = JSON.stringify(data, null, 3)
     }
-
 }
 document.querySelector('.btn.btn-danger').onclick = (e) => {
     e.preventDefault()
