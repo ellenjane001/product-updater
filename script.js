@@ -243,6 +243,15 @@ let DOM = {
     },
     updateData: (obj, key, data) => {
         return response = App.PUT(`${App.URL}${obj}/${key}.json`, data).then(res => res.json())
+    },
+    addProductPrice: () => {
+        let html = `<div class="container text-center p-4 d-flex gap-2 justify-content-center">
+        <h3>Add Product Price: </h3>
+        <form id="add-product-price" class="d-flex gap-3 align-items-center justify-content-center">
+            <input title="product-price" type="number" name="price" id="price" class="form-control">
+            <button class="btn btn-outline-success">Add</button>
+        </form>
+        </div>`
     }
 }
 for (i in ctgry) {
