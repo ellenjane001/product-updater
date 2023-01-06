@@ -65,11 +65,12 @@ let DOM = {
         tr.appendChild(thName)
         tr.appendChild(thOptions)
         thead.appendChild(tr)
+        console.log(data)
         for (d in data) {
             let tr = document.createElement('tr')
             let tdName = document.createElement('td')
             let tdOption = document.createElement('td')
-            let btn = DOM.createElem('button', ['btn', 'btn-outline-danger'], [{ a: 'data-value', v: JSON.stringify(data[d]) }])
+            let btn = DOM.createElem('button', ['btn', 'btn-outline-danger'], [{ a: 'data-value', v: JSON.stringify([data[d]['key'], data[d]['category']]) }])
             btn.innerText = 'Update'
             btn.addEventListener('click', DOM.showProd)
             tdOption.appendChild(btn)
@@ -82,9 +83,13 @@ let DOM = {
         table.appendChild(tbody)
         return table
     },
-    showProd: (e) => {
+    showProd: async (e) => {
+        let data = JSON.parse(e.target.getAttribute('data-value'))
+        let res = await DOM.fetchPerItem(data[0], data[1])
+
+        console.log(res)
         DOM.clearElements(document.querySelector('.container.selector'))
-        DOM.showForm(e.target.getAttribute('data-value'))
+        DOM.showForm(res)
     },
     showDropdown: (data) => {
         let select = document.createElement('select')
@@ -131,8 +136,8 @@ let DOM = {
         }
         return e
     },
-    showForm: (e) => {
-        let data = JSON.parse(e)
+    showForm: (data) => {
+        // let data = JSON.parse(e)
         let form = DOM.createElem('form', ['d-flex', 'flex-column', 'gap-3', 'w-100', 'mx-auto', 'py-3', 'align-items-start'])
         let nameDiv = DOM.createElem('div', ['d-flex', 'gap-3', 'w-100'])
         let sourceDiv = DOM.createElem('div', ['d-flex', 'gap-3', 'w-100'])
@@ -252,6 +257,37 @@ let DOM = {
             <button class="btn btn-outline-success">Add</button>
         </form>
         </div>`
+        return html
+    },
+    addProductSpecification: () => {
+        let html = `<div class="container text-center p-4">
+        <h3>Add Specification</h3>
+        <form id="add-product-spec" class="d-flex gap-3 align-items-center justify-content-center">
+            <label for="spec-name" class="form-label">Name</label>
+            <input type="text" name="spec-name" id="spec-name" class="form-control">
+            <label for="spec-value" class="form-label">Value</label>
+            <textarea rows="4" cols="50" name="spec-value" id="spec-value" class="form-control"></textarea>
+            <div class="btn-group">
+                <button type="button" class="btn btn-success">Add</button>
+                <button type="button" class="btn btn-danger">Clear</button>
+            </div>
+        </form>
+        </div>`
+        return html
+    },
+    returnObj: () => {
+        let html = ` <div class="container w-100 p-4 d-flex flex-column">
+        <pre class="border rounded p-5 text-bg-dark">
+
+        </pre>
+        <button type="button" class="btn btn-warning mx-auto mb-3">SAVE</button>
+        </div>`
+        return html
+    },
+    fetchPerItem: async (data, obj) => {
+        let response = await App.GET(`${App.URL}${obj}/${data}.json`)
+        let json = await response.json()
+        return await json
     }
 }
 for (i in ctgry) {
