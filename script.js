@@ -131,7 +131,14 @@ let DOM = {
         }
         if (attribs.length > 0) {
             for (attr in attribs) {
-                e.setAttribute(attribs[attr].a, attribs[attr].v)
+
+                if (attribs[attr].length > 1) {
+                    attribs[attr].forEach(b => {
+                        e.setAttribute(attribs[attr].a[b], attribs[attr].v[b])
+                    })
+                } else {
+                    e.setAttribute(attribs[attr].a, attribs[attr].v)
+                }
             }
         }
         return e
@@ -237,7 +244,9 @@ let DOM = {
         if (document.getElementById('name').value !== data.name) {
             obj.name = document.getElementById('name').value
         }
-        document.getElementsByTagName('pre')[0].innerHTML = JSON.stringify(obj, null, 3)
+        document.getElementById('specs').innerHTML = DOM.addProductSpecification()
+        document.getElementById('price').innerHTML = DOM.addProductPrice()
+        document.getElementById('data').innerHTML = DOM.returnObj(JSON.stringify(obj, null, 3))
     },
     addProdSpec: () => {
         let data = JSON.parse(document.getElementsByTagName('pre')[0].innerHTML)
@@ -254,7 +263,7 @@ let DOM = {
         <h3>Add Product Price: </h3>
         <form id="add-product-price" class="d-flex gap-3 align-items-center justify-content-center">
             <input title="product-price" type="number" name="price" id="price" class="form-control">
-            <button class="btn btn-outline-success">Add</button>
+            <button class="btn btn-outline-success" type="button">Add</button>
         </form>
         </div>`
         return html
@@ -275,10 +284,10 @@ let DOM = {
         </div>`
         return html
     },
-    returnObj: () => {
+    returnObj: (data) => {
         let html = ` <div class="container w-100 p-4 d-flex flex-column">
         <pre class="border rounded p-5 text-bg-dark">
-
+            ${data}
         </pre>
         <button type="button" class="btn btn-warning mx-auto mb-3">SAVE</button>
         </div>`
